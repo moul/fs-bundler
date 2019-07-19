@@ -86,9 +86,9 @@ COMMANDS:
      help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --format value, -f value    output format ("json", "yaml", "jsonp") (default: "json")
+   --format value, -f value    output format ("json", "yaml", "jsonp", "js") (default: "json")
    --indent, -i                use indented output (only for "json" format) (default: false)
-   --callback value, -c value  jsonp callback name (default: "callback")
+   --callback value, -c value  jsonp/js callback name (default: "callback")
    --help, -h                  show help (default: false)
    --version, -v               print the version (default: false)
 ```
