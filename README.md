@@ -1,6 +1,6 @@
 # fs-bundler
 
-:smile: fs-bundler allows to embed local files and generate JSON/YAML archives
+:smile: fs-bundler allows to embed local files and generate JSON/YAML/JSONP archives
 
 [![CircleCI](https://circleci.com/gh/moul/fs-bundler.svg?style=shield)](https://circleci.com/gh/moul/fs-bundler)
 [![GoDoc](https://godoc.org/moul.io/fs-bundler?status.svg)](https://godoc.org/moul.io/fs-bundler)
@@ -64,6 +64,11 @@ files:
         97, 109, 101, 34, 58, 32, 34, 97, 108, 108, 34, 10, 125, 10]
 ```
 
+```console
+$ fs-bundler -c hello -f jsonp *.json
+hello({"files":[{"path":"renovate.json","name":"renovate.json","content":"ewogICJleHRlbmRzIjogWwogICAgImNvbmZpZzpiYXNlIgogIF0sCiAgImdyb3VwTmFtZSI6ICJhbGwiCn0K"}]})
+```
+
 ## Usage
 
 ```console
@@ -81,10 +86,11 @@ COMMANDS:
      help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --format value, -f value  output format ("json", "yaml") (default: "json")
-   --indent, -i              use indented output (only for "json" format) (default: false)
-   --help, -h                show help (default: false)
-   --version, -v             print the version (default: false)
+   --format value, -f value    output format ("json", "yaml", "jsonp") (default: "json")
+   --indent, -i                use indented output (only for "json" format) (default: false)
+   --callback value, -c value  jsonp callback name (default: "callback")
+   --help, -h                  show help (default: false)
+   --version, -v               print the version (default: false)
 ```
 
 ## Install

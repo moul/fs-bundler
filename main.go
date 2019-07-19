@@ -30,13 +30,14 @@ func main() {
 	app := &cli.App{
 		Name: "fs-bundler",
 		Flags: []cli.Flag{
-			&cli.StringFlag{Name: "format", Aliases: []string{"f"}, Value: "json", Usage: `output format ("json", "yaml")`},
+			&cli.StringFlag{Name: "format", Aliases: []string{"f"}, Value: "json", Usage: `output format ("json", "yaml", "jsonp")`},
 			&cli.BoolFlag{Name: "indent", Aliases: []string{"i"}, Usage: `use indented output (only for "json" format)`},
+			&cli.StringFlag{Name: "callback", Aliases: []string{"c"}, Value: "callback", Usage: `jsonp callback name`},
 			// compress
 		},
 		Action: func(c *cli.Context) error {
 			switch c.String("format") {
-			case "json", "yaml":
+			case "json", "yaml", "jsonp":
 			default:
 				return fmt.Errorf("unsupported output format %q", c.String("format"))
 			}
@@ -87,6 +88,12 @@ func main() {
 					}
 					fmt.Println(string(out))
 				}
+			case "jsonp":
+				out, err := json.Marshal(dump)
+				if err != nil {
+					return err
+				}
+				fmt.Printf("%s(%s)", c.String("callback"), string(out))
 			case "yaml":
 				out, err := yaml.Marshal(dump)
 				if err != nil {
