@@ -12,6 +12,7 @@ import (
 	zglob "github.com/mattn/go-zglob"
 	"github.com/pkg/errors"
 	cli "gopkg.in/urfave/cli.v2"
+	yaml "gopkg.in/yaml.v3"
 )
 
 type Dump struct {
@@ -21,18 +22,24 @@ type Dump struct {
 type File struct {
 	Path    string `json:"path"`
 	Name    string `json:"name"`
-	Content []byte `json:"content"`
+	Content []byte `json:"content" yaml:"content,flow"`
 	// Type string `json:"type"` // mime
 }
 
 func main() {
 	app := &cli.App{
-		Name:  "fs-bundler",
+		Name: "fs-bundler",
 		Flags: []cli.Flag{
+			&cli.StringFlag{Name: "format", Aliases: []string{"f"}, Value: "json", Usage: `output format ("json", "yaml")`},
+			&cli.BoolFlag{Name: "indent", Aliases: []string{"i"}, Usage: `use indented output (only for "json" format)`},
 			// compress
-			// output (yml, json, ...)
 		},
 		Action: func(c *cli.Context) error {
+			switch c.String("format") {
+			case "json", "yaml":
+			default:
+				return fmt.Errorf("unsupported output format %q", c.String("format"))
+			}
 			targets := c.Args().Slice()
 			if len(targets) == 0 {
 				targets = append(targets, ".")
@@ -65,14 +72,33 @@ func main() {
 					Content: content,
 				})
 			}
-			out, err := json.MarshalIndent(dump, "", "  ")
-			if err != nil {
-				return err
+			switch c.String("format") {
+			case "json":
+				if c.Bool("indent") {
+					out, err := json.MarshalIndent(dump, "", "  ")
+					if err != nil {
+						return err
+					}
+					fmt.Println(string(out))
+				} else {
+					out, err := json.Marshal(dump)
+					if err != nil {
+						return err
+					}
+					fmt.Println(string(out))
+				}
+			case "yaml":
+				out, err := yaml.Marshal(dump)
+				if err != nil {
+					return err
+				}
+				fmt.Println(string(out))
 			}
-			fmt.Println(string(out))
 			return nil
 		},
 	}
 
-	app.Run(os.Args)
+	if err := app.Run(os.Args); err != nil {
+		log.Printf("error: %v", err)
+	}
 }
